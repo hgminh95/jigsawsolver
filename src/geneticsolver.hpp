@@ -1,7 +1,7 @@
-#include "JigsawSolver.h"
+#include "jigsawsolver.hpp"
 #include <vector>
 #include <algorithm>
-#include "segment.h"
+#include "segment.hpp"
 #include <iostream>
 
 class GeneticSolver : public JigsawSolver

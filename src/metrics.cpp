@@ -1,4 +1,4 @@
-#include "metrics.h"
+#include "metrics.hpp"
 
 long double lpq(PROCON::Image& piece1, PROCON::Image& piece2, PROCON::Direction direction){
 	long double res = 0.0;

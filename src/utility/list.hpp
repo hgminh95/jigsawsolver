@@ -1,5 +1,7 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef __LIST_H__
+#define __LIST_H__
+
+#include <cstring>
 
 template <class TYPE>
 class List{
@@ -20,7 +22,7 @@ public:
 
 
 template <class TYPE> List<TYPE>::List(){
-	value = nullptr;
+	value = NULL;
 	size = 0;
 }
 
@@ -47,7 +49,7 @@ template <class TYPE> void List<TYPE>::resize(int _size){
 
 template <class TYPE> void List<TYPE>::clear(){
 	delete[] value;
-	value = nullptr;
+	value = NULL;
 	size = 0;
 }
 

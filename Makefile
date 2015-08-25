@@ -1,36 +1,34 @@
-CC = g++	
+CC = g++
 DEBUG = -g -Wall
-CFLAGS = -c $(DEBUG)
-LFLAGS = $(DEBUG)
+CFLAGS = -c -std=gnu++11 $(DEBUG)
+LFLAGS = -std=gnu++11 $(DEBUG)
 
 OBJS = bin/image/image.o
 
 .PHONY: compile clean test
 
-all: compile clean test
+all: compile test clean
 
 compile:
 	@printf "[COMPILE] src/image/*\n"
 	@mkdir -p bin/image
 	@$(CC) $(CFLAGS) src/image/*.cpp
 	@mv ./*.o bin/image
-	@printf "[COMPILE] src/ultility/*\n"
-	@mkdir -p bin/ultility
-	@$(CC) $(CFLAGS) src/ultility/*.cpp
-	@mv ./*.o bin/ultility
+	@printf "[COMPILE] src/utility/*\n"
+	@mkdir -p bin/utility
+	@$(CC) $(CFLAGS) src/utility/*.cpp
+	@mv ./*.o bin/utility
 	@printf "[COMPILE] src/*\n"
 	@$(CC) $(CFLAGS) src/*.cpp
-	@mv ./*.o bin/ 
+	@mv ./*.o bin/
 	@printf "[COMPILE] Linking...\n"
-	@$(CC) -o bin/jigsawsolver $(LFLAGS) bin/*.o bin/image/*.o bin/ultility/*.o
-	@printf "[COMPILE] Done."
+	@$(CC) -o bin/jigsawsolver $(LFLAGS) bin/*.o bin/image/*.o bin/utility/*.o
+	@printf "[COMPILE] Done.\n"
 
 clean:
 	@printf "[CLEAN] "
 	@rm -f */*.o */*/*.o
-	@printf "[DONE]"
+	@printf "[DONE]\n"
 
 test:
-	@printf "[TEST] Not implement yet"
-	
-	
+	@printf "[TEST] Not implement yet\n"

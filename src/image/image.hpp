@@ -3,8 +3,8 @@
 
 #include <fstream>
 #include <string>
-#include "../utility/list.h"
-#include "../utility/convert.h"
+#include "../utility/list.hpp"
+#include "../utility/convert.hpp"
 
 namespace PROCON{
 	const int hx[] = { 0, 0, -1, 1 };

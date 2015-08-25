@@ -1,7 +1,7 @@
 #ifndef METRICS_H
 #define METRICS_H
 
-#include "image.h"
+#include "image/image.hpp"
 #include <cmath>
 #include <algorithm>
 

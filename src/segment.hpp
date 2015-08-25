@@ -4,7 +4,7 @@
 #include <map>
 #include <algorithm>
 #include <cmath>
-#include "image.h"
+#include "image/image.hpp"
 #include <iostream>
 
 struct Position
@@ -105,7 +105,7 @@ public:
 		else return true;
 	}
 
-	bool isEmpty(Position pos) const 
+	bool isEmpty(Position pos) const
 	{
 		if (!isInside(pos)) return false;
 
@@ -117,7 +117,7 @@ public:
 	{
 		Position result;
 		if (!containPiece(pieceIndex)) return result;
-		
+
 		return posOfPiece[pieceIndex];
 	}
 
@@ -147,7 +147,7 @@ public:
 			table[nRows + i][nColumns + j] = i * nColumns + j;
 			posOfPiece[i * nColumns + j] = Position(nRows + i, nColumns + j);
 		}
-		
+
 		for (int i = 0; i < nRows * nColumns; i++)
 		{
 			int piece1 = rand() % (nRows * nColumns);

@@ -1,13 +1,13 @@
-#ifndef DATABASE_H
-#define DATABASE_H
+#ifndef __DATABASE_H__
+#define __DATABASE_H__
 
 #define INF 100000000
 #define EPS .000001
 
 #include <vector>
 #include <string>
-#include "metrics.h"
-#include "image.h"
+#include "metrics.hpp"
+#include "image/image.hpp"
 
 class Database
 {
@@ -36,7 +36,7 @@ public:
 
 	double getCompatibility(const std::string& type, int piece1, int piece2, int direction) const;
 	double getCompatibility(int piece1, int piece2, int direction) const;
-	
+
 	bool isBestBuddy(int piece1, int piece2, int direction) const;
 	int getBestBuddyOf(int piece, int direction) const;
 

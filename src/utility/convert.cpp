@@ -1,4 +1,4 @@
-#include "convert.h"
+#include "convert.hpp"
 
 int getbit(int a, int i){
 	return (1 & (a >> i));

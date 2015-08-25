@@ -1,6 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
-
-#include "GeneticSolver.h"
+#include "geneticsolver.hpp"
 #include <cstdio>
 #include <iostream>
 #include <cstring>
@@ -11,7 +9,7 @@ GeneticSolver geneticSolver;
 /* const */
 std::string ORIGINAL_FILE;
 std::string OUTPUT_FILE;
-std::string ORDER_FILE; 
+std::string ORDER_FILE;
 std::string FIXED_POINT_FILE;
 std::string DATABASE_FILE;
 
@@ -38,9 +36,9 @@ void initDefaultValue()
 	MAX_POPULATION = 400;
 	MUTATION_RATE = 5;
 
-	USING_FIXED_POINT = true;
+	USING_FIXED_POINT = false;
 	USING_DATABASE = false;
-	
+
 	EXPORT_TO_OUTPUT_FILE = true;
 }
 
@@ -109,7 +107,5 @@ int main(int argc, char* arg[])
 	geneticSolver.EXPORT_TO_OUTPUT_IMAGE = EXPORT_TO_OUTPUT_FILE;
 
 	geneticSolver.Solve();
-
-	std::cin.ignore();
 	return 0;
 }

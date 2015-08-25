@@ -2,7 +2,7 @@
 #define JIGSAW_SOLVER_H
 
 #include <string>
-#include "Database.h"
+#include "database.hpp"
 
 class JigsawSolver
 {
@@ -13,7 +13,7 @@ public:
 	bool USING_DATABASE;
 
 	bool EXPORT_TO_OUTPUT_IMAGE;
-	
+
 	int MAX_GENERATION_NUMBER;
 	int MAX_POPULATION;
 	int MUTATION_RATE;
@@ -34,4 +34,3 @@ public:
 };
 
 #endif
-

@@ -1,4 +1,4 @@
-#include "JigsawSolver.h"
+#include "jigsawsolver.hpp"
 
 
 JigsawSolver::JigsawSolver()

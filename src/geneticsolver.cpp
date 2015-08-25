@@ -1,4 +1,4 @@
-#include "GeneticSolver.h"
+#include "geneticsolver.hpp"
 
 
 bool fitness_cmp(const Segment& x1, const Segment& x2){
@@ -44,7 +44,7 @@ void GeneticSolver::Solve()
 		std::sort(crrPopulation.begin(), crrPopulation.end(), fitness_cmp);
 		removeSameChromosome();
 		std::cout << "------Best chromosome: " << crrPopulation.begin()->fitness_value << " " << (crrPopulation.end() - 1) -> fitness_value <<std::endl;
-		
+
 		// copy 4 best chromosomes to new population
 		std::cout << "------Creating new generation...";
 		newPopulation.clear();
@@ -166,6 +166,7 @@ void GeneticSolver::addNewPiece(const Segment& father, const Segment& mother, Se
 }
 
 Segment GeneticSolver::crossover(Segment& father, Segment& mother){
+
 	vector_1.clear();
 	vector_2.clear();
 	vector_3.clear();
@@ -238,7 +239,7 @@ void GeneticSolver::addPieceInSecondList(const Segment& father, const Segment& m
 	Position newPos;
 	newPos.X = pos.X + PROCON::hx[direction];
 	newPos.Y = pos.Y + PROCON::hy[direction];
-	
+
 	int newPart = 0;
 	if (data.isBestBuddy(part, father.nextTo(part, direction), direction))
 		newPart = father.nextTo(part, direction);
@@ -257,9 +258,9 @@ void GeneticSolver::addPieceInThirdList(const Segment& father, const Segment& mo
 	if (vector_3.size() < 1) return;
 
 	int index = rand() % vector_3.size();
-	
+
 	Position pos = vector_3[index].first;
-	int direction = vector_3[index].second;	
+	int direction = vector_3[index].second;
 	int part = child.getPiece(pos);
 	Position newPos;
 	newPos.X = pos.X += PROCON::hx[direction];
