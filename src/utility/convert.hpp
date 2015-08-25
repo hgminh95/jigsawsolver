@@ -1,5 +1,5 @@
-#ifndef CONVERT_H
-#define CONVERT_H
+#ifndef __CONVERT_H__
+#define __CONVERT_H__
 
 #include <sstream>
 #include <string>

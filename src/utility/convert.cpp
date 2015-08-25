@@ -1,10 +1,10 @@
 #include "convert.hpp"
 
-int getbit(int a, int i){
+int getbit(int a, int i) {
 	return (1 & (a >> i));
 }
 
-char* toChar(int integer, int length){
+char* toChar(int integer, int length) {
 	char* res = new char[length];
 
 	for (int i = length - 1; i >= 0; i--){
@@ -19,7 +19,7 @@ char* toChar(int integer, int length){
 	return res;
 }
 
-int toInteger(std::string s){
+int toInteger(std::string s) {
 	std::stringstream ss;
 	ss << s;
 	int x;

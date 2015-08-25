@@ -24,16 +24,15 @@ bool USING_FIXED_POINT;
 bool USING_DATABASE;
 bool EXPORT_TO_OUTPUT_FILE;
 
-void initDefaultValue()
-{
+void initDefaultValue() {
 	ORIGINAL_FILE = "D:\\prob01.ppm";
 	OUTPUT_FILE = "D:\\prob01.ppm.result";
 	ORDER_FILE = "D:\\prob01.ppm.order";
 	FIXED_POINT_FILE = "D:\\prob01.ppm.fixed";
 	COMP_METRIC = 1;
 
-	MAX_GENERATION = 50;
-	MAX_POPULATION = 400;
+	MAX_GENERATION = 100;
+	MAX_POPULATION = 50;
 	MUTATION_RATE = 5;
 
 	USING_FIXED_POINT = false;
@@ -43,13 +42,11 @@ void initDefaultValue()
 }
 
 
-int main(int argc, char* arg[])
-{
+int main(int argc, char* arg[]) {
 	initDefaultValue();
 	std::ios_base::sync_with_stdio(false);
 
-	for (int i = 1; i < argc; i++)
-	{
+	for (int i = 1; i < argc; i++) {
 		char* identity;
 		char* value;
 
@@ -74,13 +71,13 @@ int main(int argc, char* arg[])
 		if (strcmp(identity, "mutation_rate") == 0)
 			MUTATION_RATE = atoi(value);
 
-		if (strcmp(identity, "using_database") == 0)
-		if (strcmp(value, "true") == 0)
-		{
-			USING_DATABASE = true;
-			EXPORT_TO_OUTPUT_FILE = false;
+		if (strcmp(identity, "using_database") == 0) {
+			if (strcmp(value, "true") == 0) {
+				USING_DATABASE = true;
+				EXPORT_TO_OUTPUT_FILE = false;
+			}
+			else USING_DATABASE = false;
 		}
-		else USING_DATABASE = false;
 
 		if (strcmp(identity, "database") == 0)
 			DATABASE_FILE = value;
@@ -91,9 +88,10 @@ int main(int argc, char* arg[])
 		if (strcmp(identity, "comp_metric") == 0)
 			COMP_METRIC = atoi(value);
 
-		if (strcmp(identity, "using_fixedpoint") == 0)
+		if (strcmp(identity, "using_fixedpoint") == 0) {
 			if (strcmp(value, "true") == 0) USING_FIXED_POINT = true;
 			else USING_FIXED_POINT = false;
+		}
 
 		if (strcmp(identity, "fixedpoint") == 0)
 			FIXED_POINT_FILE = value;

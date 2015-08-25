@@ -1,7 +1,7 @@
 CC = g++
 DEBUG = -g -Wall
-CFLAGS = -c -std=gnu++11 $(DEBUG)
-LFLAGS = -std=gnu++11 $(DEBUG)
+CFLAGS = -c -std=c++11 $(DEBUG)
+LFLAGS = -std=c++11 $(DEBUG)
 
 OBJS = bin/image/image.o
 

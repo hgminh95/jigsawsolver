@@ -1,24 +1,24 @@
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef __IMAGE_H__
+#define __IMAGE_H__
 
 #include <fstream>
 #include <string>
 #include "../utility/list.hpp"
 #include "../utility/convert.hpp"
 
-namespace PROCON{
+namespace JigsawSolver {
 	const int hx[] = { 0, 0, -1, 1 };
 	const int hy[] = { -1, 1, 0, 0 };
 
 	enum Direction { left, right, up, down };
 
-	struct Color{
+	struct Color {
 		int red, green, blue;
 
 		void setColor(int _red, int _green, int _blue);
 	};
 
-	class Image{
+	class Image {
 	public:
 		List < List<Color> > bitmap;
 		int width, height;

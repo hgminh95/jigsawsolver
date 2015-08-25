@@ -1,5 +1,5 @@
-#ifndef SEGMENT_H
-#define SEGMENT_H
+#ifndef __SEGMENT_H__
+#define __SEGMENT_H__
 
 #include <map>
 #include <algorithm>
@@ -7,28 +7,26 @@
 #include "image/image.hpp"
 #include <iostream>
 
-struct Position
-{
+struct Position {
 	int X, Y;
 
-	Position(){
+	Position() {
 		X = Y = 0;
 	};
-	Position(int _X, int _Y){
+
+	Position(int _X, int _Y) {
 		X = _X;
 		Y = _Y;
 	}
 
-	bool operator==(const Position& pos)
-	{
+	bool operator==(const Position& pos) {
 		return X == pos.X && Y == pos.Y;
 	}
 };
 
 typedef std::map<Position, int> map_pII;
 
-class Segment
-{
+class Segment {
 protected:
 	Position leftTop, rightBot;
 	int nRows, nColumns;
@@ -40,8 +38,7 @@ protected:
 
 	bool isFixed;
 
-	void updateBoundaries(const Position& newPos)
-	{
+	void updateBoundaries(const Position& newPos) {
 		if (isFixed) return;
 
 		leftTop.X = std::min(leftTop.X, newPos.X);
@@ -51,10 +48,8 @@ protected:
 		rightBot.Y = std::max(rightBot.Y, newPos.Y);
 	}
 
-	bool isInside(const Position& newPos) const
-	{
-		if (isFixed)
-		{
+	bool isInside(const Position& newPos) const	{
+		if (isFixed) {
 			return
 				newPos.X >= leftTop.X && newPos.X <= rightBot.X &&
 				newPos.Y >= leftTop.Y && newPos.Y <= rightBot.Y;
@@ -70,20 +65,17 @@ protected:
 		return true;
 	}
 
-	void swap(int piece1, int piece2)
-	{
+	void swap(int piece1, int piece2)	{
 		std::swap(table[posOfPiece[piece1].X][posOfPiece[piece1].Y], table[posOfPiece[piece2].X][posOfPiece[piece2].Y]);
 		std::swap(posOfPiece[piece1], posOfPiece[piece2]);
 	}
 
 public:
-	Segment()
-	{
+	Segment()	{
 		isFixed = false;
 	}
 
-	Segment(int _nRows, int _nColumns)
-	{
+	Segment(int _nRows, int _nColumns) {
 		nRows = _nRows;
 		nColumns = _nColumns;
 
@@ -97,32 +89,28 @@ public:
 		rightBot = Position(-1, -1);
 	}
 
-	bool containPiece(int pieceIndex) const
-	{
+	bool containPiece(int pieceIndex) const	{
 		if (pieceIndex < 0 || pieceIndex >= nRows * nColumns) return false;
 
 		if (table[posOfPiece[pieceIndex].X][posOfPiece[pieceIndex].Y] != pieceIndex) return false;
 		else return true;
 	}
 
-	bool isEmpty(Position pos) const
-	{
+	bool isEmpty(Position pos) const {
 		if (!isInside(pos)) return false;
 
 		if (table[pos.X][pos.Y] == -1) return true;
 		else return false;
 	}
 
-	Position getPosOfPiece(int pieceIndex) const
-	{
+	Position getPosOfPiece(int pieceIndex) const {
 		Position result;
 		if (!containPiece(pieceIndex)) return result;
 
 		return posOfPiece[pieceIndex];
 	}
 
-	void add(Position pos, int pieceIndex)
-	{
+	void add(Position pos, int pieceIndex) {
 		if (containPiece(pieceIndex)) return;
 		if (!isInside(pos)) return;
 		if (!isEmpty(pos)) return;
@@ -135,21 +123,18 @@ public:
 		updateBoundaries(pos);
 	}
 
-	void generate()
-	{
+	void generate()	{
 		leftTop = Position(nRows, nColumns);
 		rightBot = Position(2 * nRows - 1, 2 * nColumns - 1);
 		piecesCount = nRows * nColumns;
 
 		for (int i = 0; i < nRows; i++)
-		for (int j = 0; j < nColumns; j++)
-		{
+		for (int j = 0; j < nColumns; j++) {
 			table[nRows + i][nColumns + j] = i * nColumns + j;
 			posOfPiece[i * nColumns + j] = Position(nRows + i, nColumns + j);
 		}
 
-		for (int i = 0; i < nRows * nColumns; i++)
-		{
+		for (int i = 0; i < nRows * nColumns; i++) {
 			int piece1 = rand() % (nRows * nColumns);
 			int piece2 = rand() % (nRows * nColumns);
 
@@ -157,40 +142,36 @@ public:
 		}
 	}
 
-	int nextTo(const Position& pos, int direction) const
-	{
+	int nextTo(const Position& pos, int direction) const {
 		if (!isInside(pos)) return -1;
 
 		Position newPos;
-		newPos.X = pos.X + PROCON::hx[direction];
-		newPos.Y = pos.Y + PROCON::hy[direction];
+		newPos.X = pos.X + JigsawSolver::hx[direction];
+		newPos.Y = pos.Y + JigsawSolver::hy[direction];
 
 		if (!isInside(newPos)) return -1;
 
 		return table[newPos.X][newPos.Y];
 	}
 
-	int nextTo(int piece, int direction) const
-	{
+	int nextTo(int piece, int direction) const {
 		if (!containPiece(piece)) return -1;
 		return nextTo(posOfPiece[piece], direction);
 	}
 
-	int getPiece(Position pos)
-	{
+	int getPiece(Position pos) {
 		if (!isInside(pos)) return -1;
 		return table[pos.X][pos.Y];
 	}
 
 
-	int count()
-	{
+	unsigned int count() {
 		return piecesCount;
 	}
 
 	double fitness_value;
 
-	void calculate_fitness_value(const Database& data){
+	void calculate_fitness_value(const JigsawSolver::Database& data) {
 		fitness_value = 0;
 
 		for (int i = leftTop.X; i <= rightBot.X; i++)
@@ -207,9 +188,8 @@ public:
 		}
 	}
 
-	void exportToImageFile(Database& data, const std::string& path)
-	{
-		PROCON::PPMImage newImage;
+	void exportToImageFile(JigsawSolver::Database& data, const std::string& path) {
+		JigsawSolver::PPMImage newImage;
 		newImage.resize(data.originalImage.height, data.originalImage.width);
 
 		newImage.maxColor = data.originalImage.maxColor;
@@ -223,31 +203,28 @@ public:
 		int piece_width = newImage.width / newImage.nColumns;
 
 		for (int i = leftTop.X; i <= rightBot.X; i++)
-		for (int j = leftTop.Y; j <= rightBot.Y; j++)
-		{
-			Position pos;
-			pos.X = i - leftTop.X;
-			pos.Y = j - leftTop.Y;
+			for (int j = leftTop.Y; j <= rightBot.Y; j++) {
+				Position pos;
+				pos.X = i - leftTop.X;
+				pos.Y = j - leftTop.Y;
 
-			int part = table[i][j];
+				int part = table[i][j];
 
-			for (int p = 0; p < piece_height; p++)
-			for (int q = 0; q < piece_width; q++)
-				newImage.bitmap[pos.X * piece_height + p][pos.Y * piece_width + q] = data.piece[part].bitmap[p][q];
-		}
+				for (int p = 0; p < piece_height; p++)
+					for (int q = 0; q < piece_width; q++)
+						newImage.bitmap[pos.X * piece_height + p][pos.Y * piece_width + q] = data.piece[part].bitmap[p][q];
+			}
 
 		newImage.exportTo(path.c_str(), 0, 0, newImage.height, newImage.width);
 	}
 
-	void exportToOrderFile(const std::string& path)
-	{
+	void exportToOrderFile(const std::string& path) {
 		std::ofstream orderFile(path.c_str());
 
 		if (!orderFile.good()) return;
 
 		orderFile << nRows << " " << nColumns << "\n";
-		for (int i = leftTop.X; i <= rightBot.X; i++)
-		{
+		for (int i = leftTop.X; i <= rightBot.X; i++) {
 			for (int j = leftTop.Y; j <= rightBot.Y; j++)
 				orderFile << table[i][j] << " ";
 			orderFile << "\n";
@@ -256,8 +233,7 @@ public:
 		orderFile.close();
 	}
 
-	void fix()
-	{
+	void fix() {
 		isFixed = true;
 		leftTop = { 1, 1 };
 		rightBot = { nRows, nColumns };

@@ -1,11 +1,9 @@
 #include "jigsawsolver.hpp"
 
+using namespace JigsawSolver;
 
-JigsawSolver::JigsawSolver()
-{
+Solver::Solver() {
 }
 
-
-JigsawSolver::~JigsawSolver()
-{
+Solver::~Solver() {
 }

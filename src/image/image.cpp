@@ -1,47 +1,40 @@
 #include "image.hpp"
 
-/* STRUCT COLOR */
-
-namespace PROCON
-{
-	void PROCON::Color::setColor(int _red, int _green, int _blue){
+namespace JigsawSolver {
+	void Color::setColor(int _red, int _green, int _blue) { 
 		red = _red;
 		green = _green;
 		blue = _blue;
 	}
 
-	/* END OF STRUCT */
-
-	/* CLASS IMAGE */
-
-	PROCON::Image::Image(){
+	Image::Image() {
 		width = 0;
 		height = 0;
 		maxColor = 0;
 	}
 
-	PROCON::Image::~Image(){
+	Image::~Image() {
 		bitmap.clear();
 	}
 
-	void PROCON::Image::exportToImage(Image &img, int leftTop_x, int leftTop_y, int rightBot_x, int rightBot_y){
+	void Image::exportToImage(Image &img, int leftTop_x, int leftTop_y, int rightBot_x, int rightBot_y) {
 		int _height = rightBot_x - leftTop_x;
 		int _width = rightBot_y - leftTop_y;
 
 		img.resize(_height, _width);
 
 		for (int i = leftTop_x; i < rightBot_x; i++)
-		for (int j = leftTop_y; j < rightBot_y; j++)
-			img.bitmap[i - leftTop_x][j - leftTop_y] = bitmap[i][j];
+			for (int j = leftTop_y; j < rightBot_y; j++)
+				img.bitmap[i - leftTop_x][j - leftTop_y] = bitmap[i][j];
 	}
 
-	void PROCON::Image::clear(){
+	void Image::clear() {
 		bitmap.clear();
 		width = 0;
 		height = 0;
 	}
 
-	void PROCON::Image::resize(int _height, int _width){
+	void Image::resize(int _height, int _width) {
 		clear();
 		height = _height;
 		width = _width;
@@ -50,7 +43,7 @@ namespace PROCON
 		for (int i = 0; i < _height; i++) bitmap[i].resize(_width);
 	}
 
-	void PROCON::Image::importFrom(const char* matrix, int _height, int _width, int _maxColor){
+	void Image::importFrom(const char* matrix, int _height, int _width, int _maxColor) {
 		resize(_height, _width);
 
 		maxColor = _maxColor;
@@ -59,22 +52,18 @@ namespace PROCON
 		for (int i = 0; i < height; i++)
 		for (int j = 0; j < width; j++)
 		if (bytePerSample == 1)
-			bitmap[i][j].setColor((unsigned char)matrix[(i * width + j) * 3],
-			(unsigned char)matrix[(i * width + j) * 3 + 1],
-			(unsigned char)matrix[(i * width + j) * 3 + 2]
+			bitmap[i][j].setColor((unsigned char) matrix[(i * width + j) * 3],
+			(unsigned char) matrix[(i * width + j) * 3 + 1],
+			(unsigned char) matrix[(i * width + j) * 3 + 2]
 			);
 		else
-			bitmap[i][j].setColor((unsigned char)matrix[(i * width + j) * 6] * 256 + (unsigned char)matrix[(i * width + j) * 6 + 1],
-			(unsigned char)matrix[(i * width + j) * 6 + 2] * 256 + (unsigned char)matrix[(i * width + j) * 6 + 3],
-			(unsigned char)matrix[(i * width + j) * 6 + 4] * 256 + (unsigned char)matrix[(i * width + j) * 6 + 5]
+			bitmap[i][j].setColor((unsigned char) matrix[(i * width + j) * 6] * 256 + (unsigned char) matrix[(i * width + j) * 6 + 1],
+			(unsigned char) matrix[(i * width + j) * 6 + 2] * 256 + (unsigned char) matrix[(i * width + j) * 6 + 3],
+			(unsigned char) matrix[(i * width + j) * 6 + 4] * 256 + (unsigned char) matrix[(i * width + j) * 6 + 5]
 			);
 	}
 
-	/* END OF CLASS */
-
-	/* CLASS PPMIMAGE */
-
-	void PROCON::PPMImage::exportTo(const char* outputPath, int leftTop_x, int leftTop_y, int rightBot_x, int rightBot_y){
+	void PPMImage::exportTo(const char* outputPath, int leftTop_x, int leftTop_y, int rightBot_x, int rightBot_y) {
 		std::ofstream outputFile(outputPath, std::ios::binary);
 
 		int _height = rightBot_x - leftTop_x;
@@ -90,7 +79,7 @@ namespace PROCON
 		int bytePerSamples = maxColor > 255 ? 2 : 1;
 
 		for (int i = leftTop_x; i < rightBot_x; i++)
-		for (int j = leftTop_y; j < rightBot_y; j++){
+		for (int j = leftTop_y; j < rightBot_y; j++) {
 			char *tmp = toChar(bitmap[i][j].red, bytePerSamples);
 			outputFile.write(tmp, bytePerSamples);
 			delete[] tmp;
@@ -107,16 +96,16 @@ namespace PROCON
 		outputFile.close();
 	}
 
-	bool isNumber(char x){
+	bool isNumber(char x) {
 		return x >= '0' && x <= '9';
 	}
 
-	char* read(char* buffer, int& integer){
+	char* read(char* buffer, int& integer) {
 		int i = 0;
 		while (!isNumber(buffer[i])) i++;
 
 		std::string s = "";
-		while (isNumber(buffer[i])){
+		while (isNumber(buffer[i])) {
 			s = s + buffer[i];
 			i++;
 		}
@@ -126,7 +115,7 @@ namespace PROCON
 		return buffer + i;
 	}
 
-	char* read_ignore_comment(char* buffer, int& integer){
+	char* read_ignore_comment(char* buffer, int& integer) {
 		int i = 0;
 		while (!isNumber(buffer[i])){
 			if (buffer[i] == '#')
@@ -135,7 +124,7 @@ namespace PROCON
 		}
 
 		std::string s = "";
-		while (isNumber(buffer[i])){
+		while (isNumber(buffer[i])) {
 			s = s + buffer[i];
 			i++;
 		}
@@ -145,8 +134,7 @@ namespace PROCON
 		return buffer + i;
 	}
 
-	void PROCON::PPMImage::importFrom(const char *inputPath){
-		// export to buffer
+	void PPMImage::importFrom(const char *inputPath) {
 		std::ifstream inputFile(inputPath, std::fstream::binary);
 
 		inputFile.seekg(0, inputFile.end);
@@ -157,8 +145,6 @@ namespace PROCON
 		inputFile.read(buffer, length);
 		inputFile.close();
 
-		// read from buffer
-		// header
 		char *crrPtr = buffer;
 		crrPtr = read(crrPtr, nRows);
 
@@ -171,15 +157,13 @@ namespace PROCON
 		crrPtr = read(crrPtr, height);
 		crrPtr = read(crrPtr, maxColor);
 
-		// image
 		crrPtr++;
 		Image::importFrom(crrPtr, height, width, maxColor);
 
 		delete[] buffer;
 	}
 
-	void PROCON::PPMImage::importFromWithoutComment(const char *inputPath){
-		// export to buffer
+	void PPMImage::importFromWithoutComment(const char *inputPath) {
 		std::ifstream inputFile(inputPath, std::fstream::binary);
 
 		inputFile.seekg(0, inputFile.end);
@@ -190,31 +174,26 @@ namespace PROCON
 		inputFile.read(buffer, length);
 		inputFile.close();
 
-		// read from buffer
-		// header
 		char *crrPtr = buffer;
 		crrPtr = read_ignore_comment(crrPtr, nRows);
 		crrPtr = read_ignore_comment(crrPtr, width);
 		crrPtr = read_ignore_comment(crrPtr, height);
 		crrPtr = read_ignore_comment(crrPtr, maxColor);
 
-		// image
 		crrPtr++;
 		Image::importFrom(crrPtr, height, width, maxColor);
 
 		delete[] buffer;
 	}
 
-	/* END OF CLASS */
-
-	bool operator==(PROCON::Image& image1, PROCON::Image& image2){
+	bool operator== (Image& image1, Image& image2) {
 		if (image1.height != image2.height || image1.width != image2.width) return false;
 
 		for (int i = 0; i < image1.height; i++)
-		for (int j = 0; j < image1.width; j++)
-		if (image1.bitmap[i][j].red != image2.bitmap[i][j].red
-			|| image1.bitmap[i][j].green != image2.bitmap[i][j].green
-			|| image1.bitmap[i][j].blue != image2.bitmap[i][j].blue) return false;
+			for (int j = 0; j < image1.width; j++)
+				if (image1.bitmap[i][j].red != image2.bitmap[i][j].red
+					|| image1.bitmap[i][j].green != image2.bitmap[i][j].green
+					|| image1.bitmap[i][j].blue != image2.bitmap[i][j].blue) return false;
 
 		return true;
 	}
