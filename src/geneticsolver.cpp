@@ -91,7 +91,7 @@ void GeneticSolver::generateChromosomes() {
 
 void GeneticSolver::calculateFitnessValue() {
 	for (unsigned int i = 0; i < MAX_POPULATION; i++)
-		crrPopulation[i].calculate_fitness_value(data);
+		crrPopulation[i].calculateFitnessValue(data);
 }
 
 void GeneticSolver::removeSameChromosome() {

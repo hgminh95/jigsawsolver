@@ -2,8 +2,6 @@
 #define __METRICS_H__
 
 #include "image/image.hpp"
-#include <cmath>
-#include <algorithm>
 
 long double lpq(JigsawSolver::Image& piece1, JigsawSolver::Image& piece2, JigsawSolver::Direction direction);
 

@@ -1,4 +1,6 @@
 #include "metrics.hpp"
+#include <cmath>
+#include <algorithm>
 
 long double lpq(JigsawSolver::Image& piece1, JigsawSolver::Image& piece2, JigsawSolver::Direction direction) {
 	long double res = 0.0;

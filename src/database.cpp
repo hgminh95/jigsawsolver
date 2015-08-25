@@ -48,7 +48,7 @@ double Database::getCompatibility(const std::string& type, int piece1, int piece
 		return compatibility[i][piece1][piece2][direction];
 	}
 
-	return INFINITY;
+	return INF;
 }
 
 double Database::getCompatibility(int piece1, int piece2, int direction) const {
