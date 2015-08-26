@@ -10,33 +10,33 @@ long double lpq(JigsawSolver::Image& piece1, JigsawSolver::Image& piece2, Jigsaw
 
 	if (direction == JigsawSolver::Direction::left) {
 		for (int i = 0; i < _height; i++) {
-			res = res + pow(abs(piece1.bitmap[i][0].red - piece2.bitmap[i][_width - 1].red), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[i][0].green - piece2.bitmap[i][_width - 1].green), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[i][0].blue - piece2.bitmap[i][_width - 1].blue), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[i][0].red - piece2.bitmap[i][_width - 1].red), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[i][0].green - piece2.bitmap[i][_width - 1].green), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[i][0].blue - piece2.bitmap[i][_width - 1].blue), 3.0 / 10);
 		}
 	}
 
 	if (direction == JigsawSolver::Direction::right) {
 		for (int i = 0; i < _height; i++) {
-			res = res + pow(abs(piece1.bitmap[i][_width - 1].red - piece2.bitmap[i][0].red), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[i][_width - 1].green - piece2.bitmap[i][0].green), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[i][_width - 1].blue - piece2.bitmap[i][0].blue), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[i][_width - 1].red - piece2.bitmap[i][0].red), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[i][_width - 1].green - piece2.bitmap[i][0].green), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[i][_width - 1].blue - piece2.bitmap[i][0].blue), 3.0 / 10);
 		}
 	}
 
 	if (direction == JigsawSolver::Direction::up) {
 		for (int i = 0; i < _width; i++) {
-			res = res + pow(abs(piece1.bitmap[0][i].red - piece2.bitmap[_height - 1][i].red), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[0][i].green - piece2.bitmap[_height - 1][i].green), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[0][i].blue - piece2.bitmap[_height - 1][i].blue), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[0][i].red - piece2.bitmap[_height - 1][i].red), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[0][i].green - piece2.bitmap[_height - 1][i].green), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[0][i].blue - piece2.bitmap[_height - 1][i].blue), 3.0 / 10);
 		}
 	}
 
 	if (direction == JigsawSolver::Direction::down) {
 		for (int i = 0; i < _width; i++) {
-			res = res + pow(abs(piece1.bitmap[_height - 1][i].red - piece2.bitmap[0][i].red), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[_height - 1][i].green - piece2.bitmap[0][i].green), 3.0 / 10);
-			res = res + pow(abs(piece1.bitmap[_height - 1][i].blue - piece2.bitmap[0][i].blue), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[_height - 1][i].red - piece2.bitmap[0][i].red), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[_height - 1][i].green - piece2.bitmap[0][i].green), 3.0 / 10);
+			res = res + pow(std::abs(piece1.bitmap[_height - 1][i].blue - piece2.bitmap[0][i].blue), 3.0 / 10);
 		}
 	}
 
@@ -52,49 +52,49 @@ long double prediction(JigsawSolver::Image& piece1, JigsawSolver::Image& piece2,
 	if (direction == JigsawSolver::Direction::left) {
 		for (int i = 0; i < _height; i++) {
 			long double tmp1 = 2 * piece1.bitmap[i][0].red - piece1.bitmap[i][1].red - piece2.bitmap[i][_width - 1].red;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[i][0].green - piece1.bitmap[i][1].green - piece2.bitmap[i][_width - 1].green;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[i][0].blue - piece1.bitmap[i][1].blue - piece2.bitmap[i][_width - 1].blue;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 		}
 	}
 	if (direction == JigsawSolver::Direction::right) {
 		for (int i = 0; i < _height; i++) {
 			long double tmp1 = 2 * piece1.bitmap[i][_width - 1].red - piece1.bitmap[i][_width - 2].red - piece2.bitmap[i][0].red;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[i][_width - 1].green - piece1.bitmap[i][_width - 2].green - piece2.bitmap[i][0].green;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[i][_width - 1].blue - piece1.bitmap[i][_width - 2].blue - piece2.bitmap[i][0].blue;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 		}
 	}
 	if (direction == JigsawSolver::Direction::up) {
 		for (int i = 0; i < _width; i++) {
 			long double tmp1 = 2 * piece1.bitmap[0][i].red - piece1.bitmap[1][i].red - piece2.bitmap[_height - 1][i].red;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[0][i].green - piece1.bitmap[1][i].green - piece2.bitmap[_height - 1][i].green;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[0][i].blue - piece1.bitmap[1][i].blue - piece2.bitmap[_height - 1][i].blue;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 		}
 	}
 	if (direction == JigsawSolver::Direction::down) {
 		for (int i = 0; i < _width; i++) {
 			long double tmp1 = 2 * piece1.bitmap[_height - 1][i].red - piece1.bitmap[_height - 2][i].red - piece2.bitmap[0][i].red;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[_height - 1][i].green - piece1.bitmap[_height - 2][i].green - piece2.bitmap[0][i].green;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 
 			tmp1 = 2 * piece1.bitmap[_height - 1][i].blue - piece1.bitmap[_height - 2][i].blue - piece2.bitmap[0][i].blue;
-			res = res + pow(abs(tmp1), 3.0 / 10);
+			res = res + pow(std::abs(tmp1), 3.0 / 10);
 		}
 	}
 

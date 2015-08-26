@@ -55,7 +55,7 @@ void GeneticSolver::Solve() {
 			int parent1 = rand() % MAX_POPULATION;
 			int parent2 = rand() % MAX_POPULATION;
 			if (rand() % 100 < 50) parent1 = rand() % (MAX_POPULATION / 7);
-			if (rand() % 100 < 20) parent2 = rand() % (MAX_POPULATION / 5);
+			if (rand() % 100 < 30) parent2 = rand() % (MAX_POPULATION / 5);
 
 			Segment child = crossover(crrPopulation[parent1], crrPopulation[parent2]);
 			newPopulation.push_back(child);
@@ -99,7 +99,7 @@ void GeneticSolver::removeSameChromosome() {
 	temp.push_back(crrPopulation[0]);
 
 	for (unsigned int i = 1; i < crrPopulation.size(); i++) {
-		if (abs(crrPopulation[i].fitness_value - crrPopulation[i - 1].fitness_value) > EPS)
+		if (std::abs(crrPopulation[i].fitness_value - crrPopulation[i - 1].fitness_value) > EPS)
 			temp.push_back(crrPopulation[i]);
 	}
 

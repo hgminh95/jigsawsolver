@@ -186,10 +186,10 @@ bool Segment::isInside(const Position& newPos) const {
 
   if (piecesCount == 0) return true;
 
-  if (abs(newPos.X - leftTop.X) >= nRows ||
-    abs(newPos.X - rightBot.X) >= nRows ||
-    abs(newPos.Y - leftTop.Y) >= nColumns ||
-    abs(newPos.Y - rightBot.Y) >= nColumns) return false;
+  if (std::abs(newPos.X - leftTop.X) >= nRows ||
+    std::abs(newPos.X - rightBot.X) >= nRows ||
+    std::abs(newPos.Y - leftTop.Y) >= nColumns ||
+    std::abs(newPos.Y - rightBot.Y) >= nColumns) return false;
 
   return true;
 }

@@ -1,7 +1,13 @@
 #include "database.hpp"
 #include <iostream>
+#include <cstdlib>
+#include <cmath>
 
 using namespace JigsawSolver;
+
+long double abs(long double a) {
+	return a > 0 ? a : -a;
+}
 
 Database::Database() {
 	for (int i = 0; i < 10; i++) {
@@ -134,13 +140,16 @@ void Database::calculateBestBuddies(int type) {
 			}
 	}
 
-
+	int cntBestBuddies = 0;
 	for (int i = 0; i < nRows * nColumns; i++)
 		for (int h = 0; h < 4; h++)
 			for (int j = 0; j < nRows * nColumns; j++)
 				if (isBestBuddies[type][i][j][h] == 2) {
 					bestBuddies[type][i][h] = j;
+					cntBestBuddies++;
 				}
+
+	std::cout << "BEST BUDDIES " << cntBestBuddies << std::endl;
 }
 
 void Database::cutImageIntoPieces() {
