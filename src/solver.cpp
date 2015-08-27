@@ -17,6 +17,8 @@ std::string kMode;
 int kMaxGeneration = -1;
 int kMaxPopulation = -1;
 int kMutationRate  = -1;
+int kSizeRowsCount = -1;
+int kSizeColumnsCount = -1;
 
 void processCommandlineArguments(int argc, char *argv[]);
 void printError(std::string errorMessage);
@@ -27,8 +29,15 @@ int main(int argc, char* argv[]) {
 
 	if (kInputFile.length() == 0)
 		printError("You must specific input file");
+	if (kSizeRowsCount == -1 || kSizeColumnsCount == -1) {
+		std::cout << "You must specific size of image file:" << std::endl;
+		std::cout << "---Number of rows: ";
+		std::cin >> kSizeRowsCount;
+		std::cout << "---Number of columns: ";
+		std::cin >> kSizeColumnsCount;
+	}
 	std::cout << "Loading image from file " << kInputFile << std::endl;
-	Database::getInstance()->importFromImageFile(kInputFile);
+	Database::getInstance()->importFromImageFile(kInputFile, kSizeRowsCount, kSizeColumnsCount);
 
 	auto geneticSolver = new GeneticSolver();
 
@@ -119,6 +128,17 @@ void processCommandlineArguments(int argc, char *argv[]) {
 				}
 				else {
 					printError("Expected population after --population");
+				}
+			}
+
+			if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--size") == 0) {
+				if (i + 2 < argc) {
+					kSizeRowsCount = atoi(argv[i + 1]);
+					kSizeColumnsCount = atoi(argv[i + 2]);
+					i += 2;
+				}
+				else {
+					printError("Expected {rows} {columns} after --size");
 				}
 			}
 		}

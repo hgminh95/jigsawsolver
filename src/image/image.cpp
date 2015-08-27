@@ -1,7 +1,7 @@
 #include "image.hpp"
 
 namespace JigsawSolver {
-	void Color::setColor(int _red, int _green, int _blue) { 
+	void Color::setColor(int _red, int _green, int _blue) {
 		red = _red;
 		green = _green;
 		blue = _blue;
@@ -70,9 +70,6 @@ namespace JigsawSolver {
 		int _width = rightBot_y - leftTop_y;
 
 		outputFile << "P6" << char(10);
-		outputFile << "# " << nRows << " " << nColumns << char(10);
-		outputFile << "# " << maxSelections << char(10);
-		outputFile << "# " << selectCost << " " << swapCost << char(10);
 		outputFile << _width << " " << _height << char(10);
 		outputFile << maxColor << char(10);
 
@@ -146,36 +143,8 @@ namespace JigsawSolver {
 		inputFile.close();
 
 		char *crrPtr = buffer;
-		crrPtr = read(crrPtr, nRows);
-
-		crrPtr = read(crrPtr, nColumns);
-		crrPtr = read(crrPtr, nRows);
-		crrPtr = read(crrPtr, maxSelections);
-		crrPtr = read(crrPtr, selectCost);
-		crrPtr = read(crrPtr, swapCost);
-		crrPtr = read(crrPtr, width);
-		crrPtr = read(crrPtr, height);
-		crrPtr = read(crrPtr, maxColor);
-
-		crrPtr++;
-		Image::importFrom(crrPtr, height, width, maxColor);
-
-		delete[] buffer;
-	}
-
-	void PPMImage::importFromWithoutComment(const char *inputPath) {
-		std::ifstream inputFile(inputPath, std::fstream::binary);
-
-		inputFile.seekg(0, inputFile.end);
-		long long length = inputFile.tellg();
-		inputFile.seekg(0, inputFile.beg);
-
-		char *buffer = new char[length];
-		inputFile.read(buffer, length);
-		inputFile.close();
-
-		char *crrPtr = buffer;
-		crrPtr = read_ignore_comment(crrPtr, nRows);
+		int temp;
+		crrPtr = read_ignore_comment(crrPtr, temp);
 		crrPtr = read_ignore_comment(crrPtr, width);
 		crrPtr = read_ignore_comment(crrPtr, height);
 		crrPtr = read_ignore_comment(crrPtr, maxColor);

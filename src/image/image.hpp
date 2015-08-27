@@ -35,13 +35,8 @@ namespace JigsawSolver {
 
 	class PPMImage : public Image {
 	public:
-		int maxSelections;
-		int selectCost, swapCost;
-		int nColumns, nRows;
-
 		void exportTo(const char *outputPath, int leftTop_x, int leftTop_y, int rightBot_x, int rightBot_y);
 		void importFrom(const char *inputPath);
-		void importFromWithoutComment(const char *inputPath);
 	};
 }
 

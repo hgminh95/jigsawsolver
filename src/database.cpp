@@ -20,6 +20,14 @@ Database *Database::getInstance() {
 	return database;
 }
 
+int Database::getRowsCount() {
+	return mRowsCount;
+}
+
+int Database::getColumnsCount() {
+	return mColumnsCount;
+}
+
 Database::Database() {
 	for (int i = 0; i < 10; i++) {
 		name[i] = "";
@@ -36,12 +44,13 @@ Database::~Database() {
 	instanceFlag = false;
 }
 
-void Database::importFromImageFile(std::string path) {
+void Database::importFromImageFile(std::string path, int rowsCount, int columnsCount) {
+	mRowsCount = rowsCount;
+	mColumnsCount = columnsCount;
+
 	std::cout << "DATABASE INITITALIZING..." << std::endl;
 	std::cout << "---From File: " << path << std::endl;
 	originalImage.importFrom(path.c_str());
-	nRows = originalImage.nRows;
-	nColumns = originalImage.nColumns;
 
 	std::cout << "---Cutting image into pieces...";
 	cutImageIntoPieces();
@@ -88,7 +97,7 @@ int Database::getBestBuddyOf(int pieceIndex, int direction) const {
 
 
 bool Database::containPiece(int pieceIndex) const {
-	return pieceIndex >= 0 && pieceIndex < nRows * nColumns;
+	return pieceIndex >= 0 && pieceIndex < mRowsCount * mColumnsCount;
 }
 
 void Database::requestCalculateMetric(const std::string& type) {
@@ -97,21 +106,21 @@ void Database::requestCalculateMetric(const std::string& type) {
 		if (isInititate[ii]) return;
 
 		// calculate metric "type"
-		for (int i = 0; i < nRows; i++)
-		for (int j = 0; j < nColumns; j++)
-		for (int p = 0; p < nRows; p++)
-		for (int q = 0; q < nColumns; q++){
+		for (int i = 0; i < mRowsCount; i++)
+		for (int j = 0; j < mColumnsCount; j++)
+		for (int p = 0; p < mRowsCount; p++)
+		for (int q = 0; q < mColumnsCount; q++){
 			if (ii == 0) {
-				compatibility[ii][i * nColumns + j][p * nColumns + q][0] = lpq(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::left);
-				compatibility[ii][i * nColumns + j][p * nColumns + q][1] = lpq(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::right);
-				compatibility[ii][i * nColumns + j][p * nColumns + q][2] = lpq(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::up);
-				compatibility[ii][i * nColumns + j][p * nColumns + q][3] = lpq(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::down);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][0] = lpq(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::left);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][1] = lpq(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::right);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][2] = lpq(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::up);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][3] = lpq(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::down);
 			}
 			else if (ii == 1) {
-				compatibility[ii][i * nColumns + j][p * nColumns + q][0] = prediction(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::left);
-				compatibility[ii][i * nColumns + j][p * nColumns + q][1] = prediction(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::right);
-				compatibility[ii][i * nColumns + j][p * nColumns + q][2] = prediction(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::up);
-				compatibility[ii][i * nColumns + j][p * nColumns + q][3] = prediction(piece[i * nColumns + j], piece[p * nColumns + q], JigsawSolver::Direction::down);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][0] = prediction(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::left);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][1] = prediction(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::right);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][2] = prediction(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::up);
+				compatibility[ii][i * mColumnsCount + j][p * mColumnsCount + q][3] = prediction(piece[i * mColumnsCount + j], piece[p * mColumnsCount + q], JigsawSolver::Direction::down);
 			}
 			else if (ii == 2) {
 
@@ -125,18 +134,18 @@ void Database::requestCalculateMetric(const std::string& type) {
 
 void Database::calculateBestBuddies(int type) {
 	// init
-	for (int i = 0; i < nRows * nColumns; i++)
-		for (int j = 0; j < nRows * nColumns; j++)
+	for (int i = 0; i < mRowsCount * mColumnsCount; i++)
+		for (int j = 0; j < mRowsCount * mColumnsCount; j++)
 			for (int h = 0; h < 4; h++)
 				isBestBuddies[type][i][j][h] = 0;
 
-	for (int i = 0; i < nRows * nColumns; i++)
+	for (int i = 0; i < mRowsCount * mColumnsCount; i++)
 		for (int h = 0; h < 4; h++) {
 			long double _min = 100000000.0;
-			for (int j = 0; j < nRows * nColumns; j++)
+			for (int j = 0; j < mRowsCount * mColumnsCount; j++)
 			if (compatibility[type][i][j][h] < _min) _min = compatibility[type][i][j][h];
 
-			for (int j = 0; j < nRows * nColumns; j++)
+			for (int j = 0; j < mRowsCount * mColumnsCount; j++)
 			if (abs(compatibility[type][i][j][h] - _min) < EPS) {
 				isBestBuddies[type][i][j][h]++;
 
@@ -153,9 +162,9 @@ void Database::calculateBestBuddies(int type) {
 	}
 
 	int cntBestBuddies = 0;
-	for (int i = 0; i < nRows * nColumns; i++)
+	for (int i = 0; i < mRowsCount * mColumnsCount; i++)
 		for (int h = 0; h < 4; h++)
-			for (int j = 0; j < nRows * nColumns; j++)
+			for (int j = 0; j < mRowsCount * mColumnsCount; j++)
 				if (isBestBuddies[type][i][j][h] == 2) {
 					bestBuddies[type][i][h] = j;
 					cntBestBuddies++;
@@ -163,10 +172,10 @@ void Database::calculateBestBuddies(int type) {
 }
 
 void Database::cutImageIntoPieces() {
-	int piece_height = originalImage.height / nRows;
-	int piece_width = originalImage.width / nColumns;
+	int piece_height = originalImage.height / mRowsCount;
+	int piece_width = originalImage.width / mColumnsCount;
 
-	for (int i = 0; i < nRows; i++)
-	for (int j = 0; j < nColumns; j++)
-		originalImage.exportToImage(piece[i * nColumns + j], i * piece_height, j * piece_width, (i + 1) * piece_height, (j + 1) * piece_width);
+	for (int i = 0; i < mRowsCount; i++)
+	for (int j = 0; j < mColumnsCount; j++)
+		originalImage.exportToImage(piece[i * mColumnsCount + j], i * piece_height, j * piece_width, (i + 1) * piece_height, (j + 1) * piece_width);
 }

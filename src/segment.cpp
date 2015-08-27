@@ -128,14 +128,9 @@ void Segment::exportToImageFile(const std::string& path) const {
   newImage.resize(data->originalImage.height, data->originalImage.width);
 
   newImage.maxColor = data->originalImage.maxColor;
-  newImage.maxSelections = data->originalImage.maxSelections;
-  newImage.nColumns = data->originalImage.nColumns;
-  newImage.nRows = data->originalImage.nRows;
-  newImage.selectCost = data->originalImage.selectCost;
-  newImage.swapCost = data->originalImage.swapCost;
 
-  int piece_height = newImage.height / newImage.nRows;
-  int piece_width = newImage.width / newImage.nColumns;
+  int piece_height = newImage.height / data->getRowsCount();
+  int piece_width = newImage.width / data->getColumnsCount();
 
   for (int i = leftTop.X; i <= rightBot.X; i++)
     for (int j = leftTop.Y; j <= rightBot.Y; j++) {

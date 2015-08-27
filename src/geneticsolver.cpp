@@ -7,8 +7,8 @@ bool fitness_cmp(const Segment& x1, const Segment& x2){
 }
 
 GeneticSolver::GeneticSolver() {
-	this->nRows = Database::getInstance()->nRows;
-	this->nColumns = Database::getInstance()->nColumns;
+	this->nRows = Database::getInstance()->getRowsCount();
+	this->nColumns = Database::getInstance()->getColumnsCount();
 }
 
 GeneticSolver::~GeneticSolver() {
