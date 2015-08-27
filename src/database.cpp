@@ -9,6 +9,17 @@ long double abs(long double a) {
 	return a > 0 ? a : -a;
 }
 
+bool Database::instanceFlag = false;
+Database *Database::database = NULL;
+
+Database *Database::getInstance() {
+	if (!instanceFlag) {
+		database = new Database();
+		instanceFlag = true;
+	}
+	return database;
+}
+
 Database::Database() {
 	for (int i = 0; i < 10; i++) {
 		name[i] = "";
@@ -22,6 +33,7 @@ Database::Database() {
 
 
 Database::~Database() {
+	instanceFlag = false;
 }
 
 void Database::importFromImageFile(std::string path) {
@@ -148,8 +160,6 @@ void Database::calculateBestBuddies(int type) {
 					bestBuddies[type][i][h] = j;
 					cntBestBuddies++;
 				}
-
-	std::cout << "BEST BUDDIES " << cntBestBuddies << std::endl;
 }
 
 void Database::cutImageIntoPieces() {
@@ -159,42 +169,4 @@ void Database::cutImageIntoPieces() {
 	for (int i = 0; i < nRows; i++)
 	for (int j = 0; j < nColumns; j++)
 		originalImage.exportToImage(piece[i * nColumns + j], i * piece_height, j * piece_width, (i + 1) * piece_height, (j + 1) * piece_width);
-}
-
-
-void Database::exportToFile(const std::string& path) {
-	std::ofstream output(path);
-
-	output << nRows << " " << nColumns << "\n";
-	for (int i = 0; i < 2; i++) {
-		for (int p = 0; p < nRows * nColumns; p++) {
-			for (int q = 0; q < nRows * nColumns; q++)
-			for (int h = 0; h < 4; h++)
-				output << compatibility[i][p][q][h] << " ";
-			output << "\n";
-		}
-	}
-
-	output.close();
-}
-
-void Database::importFromDatabaseFile(const std::string& path) {
-	std::cout << "DATABASE INITIALIZING..." << std::endl;
-	std::cout << "---From database file: " << path << std::endl;
-	std::ifstream input(path);
-
-	std::cout << "---Loading...";
-	input >> nRows >> nColumns;
-	for (int i = 0; i < 2; i++) {
-		for (int p = 0; p < nRows * nColumns; p++)
-		for (int q = 0; q < nRows * nColumns; q++)
-		for (int h = 0; h < 4; h++)
-			input >> compatibility[i][p][q][h];
-	}
-	std::cout << "...Done." << std::endl;
-
-	calculateBestBuddies(0);
-	calculateBestBuddies(1);
-
-	input.close();
 }

@@ -1,6 +1,9 @@
 #include "segment.hpp"
 
 #include "image/image.hpp"
+#include "database.hpp"
+
+using namespace JigsawSolver;
 
 Segment::Segment()	{
   isFixed = false;
@@ -99,32 +102,37 @@ unsigned int Segment::count() const {
   return piecesCount;
 }
 
-void Segment::calculateFitnessValue(const JigsawSolver::Database& data) {
+void Segment::calculateFitnessValue() {
   fitness_value = 0;
+
+  auto data = Database::getInstance();
 
   for (int i = leftTop.X; i <= rightBot.X; i++)
     for (int j = leftTop.Y; j <= rightBot.Y; j++) {
       if (j != rightBot.Y)
-        fitness_value += data.getCompatibility(table[i][j], table[i][j + 1], 1);
+        fitness_value += data->getCompatibility(table[i][j], table[i][j + 1], 1);
       if (i != rightBot.X)
-        fitness_value += data.getCompatibility(table[i][j], table[i + 1][j], 3);
+        fitness_value += data->getCompatibility(table[i][j], table[i + 1][j], 3);
       if (j != leftTop.Y)
-        fitness_value += data.getCompatibility(table[i][j], table[i][j - 1], 0);
+        fitness_value += data->getCompatibility(table[i][j], table[i][j - 1], 0);
       if (i != leftTop.X)
-        fitness_value += data.getCompatibility(table[i][j], table[i - 1][j], 2);
+        fitness_value += data->getCompatibility(table[i][j], table[i - 1][j], 2);
     }
 }
 
-void Segment::exportToImageFile(JigsawSolver::Database& data, const std::string& path) const {
+void Segment::exportToImageFile(const std::string& path) const {
   JigsawSolver::PPMImage newImage;
-  newImage.resize(data.originalImage.height, data.originalImage.width);
 
-  newImage.maxColor = data.originalImage.maxColor;
-  newImage.maxSelections = data.originalImage.maxSelections;
-  newImage.nColumns = data.originalImage.nColumns;
-  newImage.nRows = data.originalImage.nRows;
-  newImage.selectCost = data.originalImage.selectCost;
-  newImage.swapCost = data.originalImage.swapCost;
+  auto data = Database::getInstance();
+
+  newImage.resize(data->originalImage.height, data->originalImage.width);
+
+  newImage.maxColor = data->originalImage.maxColor;
+  newImage.maxSelections = data->originalImage.maxSelections;
+  newImage.nColumns = data->originalImage.nColumns;
+  newImage.nRows = data->originalImage.nRows;
+  newImage.selectCost = data->originalImage.selectCost;
+  newImage.swapCost = data->originalImage.swapCost;
 
   int piece_height = newImage.height / newImage.nRows;
   int piece_width = newImage.width / newImage.nColumns;
@@ -139,7 +147,7 @@ void Segment::exportToImageFile(JigsawSolver::Database& data, const std::string&
 
       for (int p = 0; p < piece_height; p++)
         for (int q = 0; q < piece_width; q++)
-          newImage.bitmap[pos.X * piece_height + p][pos.Y * piece_width + q] = data.piece[part].bitmap[p][q];
+          newImage.bitmap[pos.X * piece_height + p][pos.Y * piece_width + q] = data->piece[part].bitmap[p][q];
     }
 
     newImage.exportTo(path.c_str(), 0, 0, newImage.height, newImage.width);

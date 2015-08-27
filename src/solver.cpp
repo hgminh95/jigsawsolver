@@ -1,109 +1,134 @@
 #include "geneticsolver.hpp"
+#include "database.hpp"
 #include <cstdio>
 #include <iostream>
 #include <cstring>
 #include <string>
 
+using namespace JigsawSolver;
+
 GeneticSolver geneticSolver;
 
-/* const */
-std::string ORIGINAL_FILE;
-std::string OUTPUT_FILE;
-std::string ORDER_FILE;
-std::string FIXED_POINT_FILE;
-std::string DATABASE_FILE;
+std::string kOutputFile;
+std::string kInputFile;
+std::string kMetric;
+std::string kMode;
 
-int COMP_METRIC;
-int RAND_TYPE;
+int kMaxGeneration = -1;
+int kMaxPopulation = -1;
+int kMutationRate  = -1;
 
-int MAX_GENERATION;
-int MAX_POPULATION;
-int MUTATION_RATE;
+void processCommandlineArguments(int argc, char *argv[]);
+void printError(std::string errorMessage);
 
-bool USING_FIXED_POINT;
-bool USING_DATABASE;
-bool EXPORT_TO_OUTPUT_FILE;
-
-void initDefaultValue() {
-	ORIGINAL_FILE = "D:\\prob01.ppm";
-	OUTPUT_FILE = "D:\\prob01.ppm.result";
-	ORDER_FILE = "D:\\prob01.ppm.order";
-	FIXED_POINT_FILE = "D:\\prob01.ppm.fixed";
-	COMP_METRIC = 1;
-
-	MAX_GENERATION = 100;
-	MAX_POPULATION = 50;
-	MUTATION_RATE = 5;
-
-	USING_FIXED_POINT = false;
-	USING_DATABASE = false;
-
-	EXPORT_TO_OUTPUT_FILE = true;
-}
-
-
-int main(int argc, char* arg[]) {
-	initDefaultValue();
+int main(int argc, char* argv[]) {
+	processCommandlineArguments(argc, argv);
 	std::ios_base::sync_with_stdio(false);
 
-	for (int i = 1; i < argc; i++) {
-		char* identity;
-		char* value;
+	if (kInputFile.length() == 0)
+		printError("You must specific input file");
+	std::cout << "Loading image from file " << kInputFile << std::endl;
+	Database::getInstance()->importFromImageFile(kInputFile);
 
-		identity = strtok(arg[i], "=");
-		value = strtok(NULL, "=");
+	auto geneticSolver = new GeneticSolver();
 
-		if (strcmp(identity, "original") == 0)
-			ORIGINAL_FILE = value;
+	if (kOutputFile.length() == 0)
+		printError("You must specific output file");
+	geneticSolver->setOutputFile(kOutputFile);
 
-		if (strcmp(identity, "output") == 0)
-			OUTPUT_FILE = value;
-
-		if (strcmp(identity, "order") == 0)
-			ORDER_FILE = value;
-
-		if (strcmp(identity, "max_generation") == 0)
-			MAX_GENERATION = atoi(value);
-
-		if (strcmp(identity, "max_population") == 0)
-			MAX_POPULATION = atoi(value);
-
-		if (strcmp(identity, "mutation_rate") == 0)
-			MUTATION_RATE = atoi(value);
-
-		if (strcmp(identity, "using_database") == 0) {
-			if (strcmp(value, "true") == 0) {
-				USING_DATABASE = true;
-				EXPORT_TO_OUTPUT_FILE = false;
-			}
-			else USING_DATABASE = false;
+	if (kMode.length() != 0) {
+		if (kMode == "fast") {
+			std::cout << "Mode: fast (population: 50, generation: 20)" << std::endl;
+			kMaxGeneration = 20;
+			kMaxPopulation = 50;
 		}
-
-		if (strcmp(identity, "database") == 0)
-			DATABASE_FILE = value;
-
-		if (strcmp(identity, "rand_type") == 0)
-			RAND_TYPE = atoi(value);
-
-		if (strcmp(identity, "comp_metric") == 0)
-			COMP_METRIC = atoi(value);
-
-		if (strcmp(identity, "using_fixedpoint") == 0) {
-			if (strcmp(value, "true") == 0) USING_FIXED_POINT = true;
-			else USING_FIXED_POINT = false;
+		else {
+			printError("Unknown mode");
 		}
-
-		if (strcmp(identity, "fixedpoint") == 0)
-			FIXED_POINT_FILE = value;
 	}
 
-	geneticSolver.customizeConstant(MAX_GENERATION, MAX_POPULATION, MUTATION_RATE);
-	geneticSolver.customizeIO(ORIGINAL_FILE, OUTPUT_FILE, ORDER_FILE);
-	geneticSolver.customizeMetric(COMP_METRIC, RAND_TYPE);
-	geneticSolver.customizeDatabase(USING_DATABASE, DATABASE_FILE);
-	geneticSolver.customizeFixedPoint(USING_FIXED_POINT, FIXED_POINT_FILE);
-	geneticSolver.EXPORT_TO_OUTPUT_IMAGE = EXPORT_TO_OUTPUT_FILE;
+	if (kMaxGeneration == -1) {
+		std::cout << "Not found max generation. Use default value..." << std::endl;
+		kMaxGeneration = 20;
+	}
+	geneticSolver->setMaxGeneration(kMaxGeneration);
 
-	geneticSolver.Solve();
+	if (kMaxPopulation == -1) {
+		std::cout << "Not found max population. Use default value..." << std::endl;
+		kMaxPopulation = 50;
+	}
+	geneticSolver->setMaxPopulation(kMaxPopulation);
+
+	if (kMutationRate == -1) {
+		std::cout << "Not found mutation rate. Use default value..." << std::endl;
+		kMutationRate = 5;
+	}
+	geneticSolver->setMutationRate(kMutationRate);
+
+	geneticSolver->solve();
 	return 0;
+}
+
+void processCommandlineArguments(int argc, char *argv[]) {
+	for (int i = 1; i < argc; i++) {
+		if (argv[i][0] == '-') {	/* Process optional arguments */
+			if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0) {
+				if (i + 1 < argc) {
+					i++;
+					kOutputFile = argv[i];
+				}
+				else {
+					printError("Expected output file after -o");
+				}
+			}
+
+			if (strcmp(argv[i], "-m") == 0 || strcmp(argv[i], "--metric") == 0) {
+				if (i + 1 < argc) {
+					i++;
+					kMetric = argv[i];
+				}
+				else {
+					printError("Expected metric type after -o");
+				}
+			}
+
+			if (strcmp(argv[i], "--mode") == 0) {
+				if (i + 1 < argc) {
+					i++;
+					kMode = argv[i];
+				}
+				else {
+					printError("Expected mode after --mode");
+				}
+			}
+
+			if (strcmp(argv[i], "--generation") == 0) {
+				if (i + 1 < argc) {
+					i++;
+					kMaxGeneration = atoi(argv[i]);
+				}
+				else {
+					printError("Expected number generation after --generation");
+				}
+			}
+
+			if (strcmp(argv[i], "--population") == 0) {
+				if (i + 1 < argc) {
+					i++;
+					kMaxPopulation = atoi(argv[i]);
+				}
+				else {
+					printError("Expected population after --population");
+				}
+			}
+		}
+		else {	/* Process non-optional arguments */
+			kInputFile = argv[i];
+		}
+	}
+}
+
+void printError(std::string errorMessage) {
+	std::cout << "ERROR: " << errorMessage << std::endl;
+	exit(0);
 }

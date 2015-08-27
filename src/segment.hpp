@@ -51,9 +51,9 @@ public:
 	int nextTo(int piece, int direction) const;
 	int getPiece(Position pos) const;
 	unsigned int count() const;
-	void calculateFitnessValue(const JigsawSolver::Database& data);
+	void calculateFitnessValue();
 
-	void exportToImageFile(JigsawSolver::Database& data, const std::string& path) const;
+	void exportToImageFile(const std::string& path) const;
 	void exportToOrderFile(const std::string &path) const;
 
 	void fix();

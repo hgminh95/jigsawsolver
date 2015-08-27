@@ -1,19 +1,15 @@
 #ifndef __GENETIC_SOLVER_H__
 #define __GENETIC_SOLVER_H__
 
-#include "jigsawsolver.hpp"
 #include <vector>
 #include <algorithm>
 #include "segment.hpp"
 #include <iostream>
 
-class GeneticSolver : public JigsawSolver::Solver {
+class GeneticSolver {
 private:
 	void generateChromosomes();
 	void calculateFitnessValue();
-	void removeSameChromosome();
-
-	void loadFixedPoint();
 
 	std::vector< std::pair<Position, int> > fixedPoint;
 
@@ -30,18 +26,24 @@ private:
 	void addPieceInThirdList(const Segment& father, const Segment& mother, Segment& child);
 	void deleteInList(std::vector< std::pair<Position, int> >& list, int index);
 
-	void importFromDatabase();
+	unsigned int mMaxGeneration;
+	unsigned int mMaxPopulation;
+	unsigned int mMutationRate;
+	unsigned int mMetric;
+	unsigned int nRows;
+	unsigned int nColumns;
+	std::string mOutputFile;
 public:
 	GeneticSolver();
 	~GeneticSolver();
 
-	void Solve();
+	void solve();
 
-	void customizeConstant(int max_generation, int max_chromosome, int mutation_rate);
-	void customizeMetric(int compType, int randType);
-	void customizeIO(std::string original_file, std::string new_file, std::string order_file);
-	void customizeFixedPoint(bool using_fixed_point, std::string fixed_point_file);
-	void customizeDatabase(bool using_database, std::string database_file);
+	void setMaxGeneration(unsigned int maxGeneration);
+	void setMaxPopulation(unsigned int maxPopulation);
+	void setMutationRate(unsigned int mutationRate);
+	void setMetric(unsigned int metric);
+	void setOutputFile(std::string outputFile);
 };
 
 #endif

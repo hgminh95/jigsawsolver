@@ -11,26 +11,31 @@
 
 namespace JigsawSolver {
 	class Database {
-	public:
+	private:
 		std::string name[10];
 		double compatibility[10][266][266][4];
 		bool isInititate[10];
-		int selectedMetric;
-
 		int isBestBuddies[10][266][266][4];
 		int bestBuddies[10][256][4];
 
+
+		static bool instanceFlag;
+		static Database *database;
+		Database();
+
+	public:
+		~Database();
+
+		static Database *getInstance();
+
 		JigsawSolver::PPMImage originalImage;
 		JigsawSolver::Image piece[256];
+		int nRows, nColumns;
+		int selectedMetric;
 
 		bool containPiece(int pieceIndex) const;
 		void cutImageIntoPieces();
 		void calculateBestBuddies(int type);
-
-		int nRows, nColumns;
-
-		Database();
-		~Database();
 
 		void importFromImageFile(std::string path);
 
@@ -41,9 +46,6 @@ namespace JigsawSolver {
 		int getBestBuddyOf(int piece, int direction) const;
 
 		void requestCalculateMetric(const std::string& type);
-
-		void exportToFile(const std::string& path);
-		void importFromDatabaseFile(const std::string& path);
 	};
 }
 
