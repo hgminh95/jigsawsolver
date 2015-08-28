@@ -5,26 +5,35 @@
 
 using namespace JigsawSolver;
 
-Segment::Segment()	{
-  isFixed = false;
-}
+Segment::Segment(int rowsCount, int columnsCount) {
+  mRowsCount = rowsCount;
+  mColumnsCount = columnsCount;
 
-Segment::Segment(int _nRows, int _nColumns) {
-  nRows = _nRows;
-  nColumns = _nColumns;
-
-  for (int i = 0; i < nRows * 2; i++)
-    for (int j = 0; j < nColumns * 2; j++)
+  table = new int *[mRowsCount * 2];
+  for (int i = 0; i < mRowsCount * 2; i++) {
+    table[i] = new int[mColumnsCount * 2];
+    for (int j = 0; j < mColumnsCount * 2; j++)
       table[i][j] = -1;
+  }
 
-  piecesCount = 0;
+  posOfPiece = new Position[mRowsCount * mColumnsCount];
+
+  mPiecesCount = 0;
   isFixed = false;
-  leftTop = Position(10000, 1000);
-  rightBot = Position(-1, -1);
+  mLeftTop = Position(10000, 1000);
+  mRightBot = Position(-1, -1);
 }
 
-bool Segment::containPiece(int pieceIndex) const	{
-  if (pieceIndex < 0 || pieceIndex >= nRows * nColumns) return false;
+Segment::~Segment() {
+  for (int i = 0; i < mRowsCount * 2; i++)
+    delete [] table[i];
+  delete [] table;
+
+  delete [] posOfPiece;
+}
+
+bool Segment::containPiece(int pieceIndex) const {
+  if (pieceIndex < 0 || pieceIndex >= mRowsCount * mColumnsCount) return false;
 
   if (table[posOfPiece[pieceIndex].X][posOfPiece[pieceIndex].Y] != pieceIndex) return false;
   else return true;
@@ -52,25 +61,25 @@ void Segment::add(Position pos, int pieceIndex) {
   table[pos.X][pos.Y] = pieceIndex;
   posOfPiece[pieceIndex] = pos;
 
-  piecesCount++;
+  mPiecesCount++;
 
   updateBoundaries(pos);
 }
 
-void Segment::generate()	{
-  leftTop = Position(nRows, nColumns);
-  rightBot = Position(2 * nRows - 1, 2 * nColumns - 1);
-  piecesCount = nRows * nColumns;
+void Segment::generate() {
+  mLeftTop = Position(mRowsCount, mColumnsCount);
+  mRightBot = Position(2 * mRowsCount - 1, 2 * mColumnsCount - 1);
+  mPiecesCount = mRowsCount * mColumnsCount;
 
-  for (int i = 0; i < nRows; i++)
-    for (int j = 0; j < nColumns; j++) {
-      table[nRows + i][nColumns + j] = i * nColumns + j;
-      posOfPiece[i * nColumns + j] = Position(nRows + i, nColumns + j);
+  for (int i = 0; i < mRowsCount; i++)
+    for (int j = 0; j < mColumnsCount; j++) {
+      table[mRowsCount + i][mColumnsCount + j] = i * mColumnsCount + j;
+      posOfPiece[i * mColumnsCount + j] = Position(mRowsCount + i, mColumnsCount + j);
     }
 
-  for (int i = 0; i < nRows * nColumns; i++) {
-    int piece1 = rand() % (nRows * nColumns);
-    int piece2 = rand() % (nRows * nColumns);
+  for (int i = 0; i < mRowsCount * mColumnsCount; i++) {
+    int piece1 = rand() % (mRowsCount * mColumnsCount);
+    int piece2 = rand() % (mRowsCount * mColumnsCount);
 
     swap(piece1, piece2);
   }
@@ -99,7 +108,7 @@ int Segment::getPiece(Position pos) const {
 }
 
 unsigned int Segment::count() const {
-  return piecesCount;
+  return mPiecesCount;
 }
 
 void Segment::calculateFitnessValue() {
@@ -107,15 +116,15 @@ void Segment::calculateFitnessValue() {
 
   auto data = Database::getInstance();
 
-  for (int i = leftTop.X; i <= rightBot.X; i++)
-    for (int j = leftTop.Y; j <= rightBot.Y; j++) {
-      if (j != rightBot.Y)
+  for (int i = mLeftTop.X; i <= mRightBot.X; i++)
+    for (int j = mLeftTop.Y; j <= mRightBot.Y; j++) {
+      if (j != mRightBot.Y)
         fitness_value += data->getCompatibility(table[i][j], table[i][j + 1], 1);
-      if (i != rightBot.X)
+      if (i != mRightBot.X)
         fitness_value += data->getCompatibility(table[i][j], table[i + 1][j], 3);
-      if (j != leftTop.Y)
+      if (j != mLeftTop.Y)
         fitness_value += data->getCompatibility(table[i][j], table[i][j - 1], 0);
-      if (i != leftTop.X)
+      if (i != mLeftTop.X)
         fitness_value += data->getCompatibility(table[i][j], table[i - 1][j], 2);
     }
 }
@@ -132,11 +141,11 @@ void Segment::exportToImageFile(const std::string& path) const {
   int piece_height = newImage.height / data->getRowsCount();
   int piece_width = newImage.width / data->getColumnsCount();
 
-  for (int i = leftTop.X; i <= rightBot.X; i++)
-    for (int j = leftTop.Y; j <= rightBot.Y; j++) {
+  for (int i = mLeftTop.X; i <= mRightBot.X; i++)
+    for (int j = mLeftTop.Y; j <= mRightBot.Y; j++) {
       Position pos;
-      pos.X = i - leftTop.X;
-      pos.Y = j - leftTop.Y;
+      pos.X = i - mLeftTop.X;
+      pos.Y = j - mLeftTop.Y;
 
       int part = table[i][j];
 
@@ -153,9 +162,9 @@ void Segment::exportToOrderFile(const std::string& path) const {
 
   if (!orderFile.good()) return;
 
-  orderFile << nRows << " " << nColumns << "\n";
-  for (int i = leftTop.X; i <= rightBot.X; i++) {
-    for (int j = leftTop.Y; j <= rightBot.Y; j++)
+  orderFile << mRowsCount << " " << mColumnsCount << "\n";
+  for (int i = mLeftTop.X; i <= mRightBot.X; i++) {
+    for (int j = mLeftTop.Y; j <= mRightBot.Y; j++)
       orderFile << table[i][j] << " ";
     orderFile << "\n";
   }
@@ -165,39 +174,39 @@ void Segment::exportToOrderFile(const std::string& path) const {
 
 void Segment::fix() {
   isFixed = true;
-  leftTop = { 1, 1 };
-  rightBot = { nRows, nColumns };
+  mLeftTop = { 1, 1 };
+  mRightBot = { mRowsCount, mColumnsCount };
 }
 
 // Private function
 void Segment::updateBoundaries(const Position& newPos) {
   if (isFixed) return;
 
-  leftTop.X = std::min(leftTop.X, newPos.X);
-  leftTop.Y = std::min(leftTop.Y, newPos.Y);
+  mLeftTop.X = std::min(mLeftTop.X, newPos.X);
+  mLeftTop.Y = std::min(mLeftTop.Y, newPos.Y);
 
-  rightBot.X = std::max(rightBot.X, newPos.X);
-  rightBot.Y = std::max(rightBot.Y, newPos.Y);
+  mRightBot.X = std::max(mRightBot.X, newPos.X);
+  mRightBot.Y = std::max(mRightBot.Y, newPos.Y);
 }
 
 bool Segment::isInside(const Position& newPos) const {
   if (isFixed) {
     return
-      newPos.X >= leftTop.X && newPos.X <= rightBot.X &&
-      newPos.Y >= leftTop.Y && newPos.Y <= rightBot.Y;
+      newPos.X >= mLeftTop.X && newPos.X <= mRightBot.X &&
+      newPos.Y >= mLeftTop.Y && newPos.Y <= mRightBot.Y;
   }
 
-  if (piecesCount == 0) return true;
+  if (mPiecesCount == 0) return true;
 
-  if (std::abs(newPos.X - leftTop.X) >= nRows ||
-    std::abs(newPos.X - rightBot.X) >= nRows ||
-    std::abs(newPos.Y - leftTop.Y) >= nColumns ||
-    std::abs(newPos.Y - rightBot.Y) >= nColumns) return false;
+  if (std::abs(newPos.X - mLeftTop.X) >= mRowsCount ||
+    std::abs(newPos.X - mRightBot.X) >= mRowsCount ||
+    std::abs(newPos.Y - mLeftTop.Y) >= mColumnsCount ||
+    std::abs(newPos.Y - mRightBot.Y) >= mColumnsCount) return false;
 
   return true;
 }
 
-void Segment::swap(int piece1, int piece2)	{
+void Segment::swap(int piece1, int piece2)  {
   std::swap(table[posOfPiece[piece1].X][posOfPiece[piece1].Y], table[posOfPiece[piece2].X][posOfPiece[piece2].Y]);
   std::swap(posOfPiece[piece1], posOfPiece[piece2]);
 }

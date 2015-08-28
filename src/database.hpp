@@ -10,46 +10,44 @@
 #include "image/image.hpp"
 
 namespace JigsawSolver {
-	class Database {
-	private:
-		std::string name[10];
-		double compatibility[10][266][266][4];
-		bool isInititate[10];
-		int isBestBuddies[10][266][266][4];
-		int bestBuddies[10][256][4];
+  class Database {
+  private:
+    double **compatibility[4];
+    int *bestBuddies[4];
 
-		int mRowsCount, mColumnsCount;
+    int mRowsCount, mColumnsCount;
 
-		static bool instanceFlag;
-		static Database *database;
-		Database();
+    static bool instanceFlag;
+    static Database *database;
+    Database();
 
-	public:
-		~Database();
+    void alloc();
 
-		static Database *getInstance();
+  public:
+    ~Database();
 
-		JigsawSolver::PPMImage originalImage;
-		JigsawSolver::Image piece[256];
-		int selectedMetric;
+    static Database *getInstance();
 
-		int getRowsCount();
-		int getColumnsCount();
+    JigsawSolver::PPMImage originalImage;
+    JigsawSolver::Image *piece;
+    int selectedMetric;
 
-		bool containPiece(int pieceIndex) const;
-		void cutImageIntoPieces();
-		void calculateBestBuddies(int type);
+    int getRowsCount();
+    int getColumnsCount();
 
-		void importFromImageFile(std::string path, int rowsCount, int columnsCount);
+    bool containPiece(int pieceIndex) const;
+    void cutImageIntoPieces();
+    void calculateBestBuddies();
 
-		double getCompatibility(const std::string& type, int piece1, int piece2, int direction) const;
-		double getCompatibility(int piece1, int piece2, int direction) const;
+    void importFromImageFile(std::string path, int rowsCount, int columnsCount);
 
-		bool isBestBuddy(int piece1, int piece2, int direction) const;
-		int getBestBuddyOf(int piece, int direction) const;
+    double getCompatibility(int piece1, int piece2, int direction) const;
 
-		void requestCalculateMetric(const std::string& type);
-	};
+    bool isBestBuddy(int piece1, int piece2, int direction) const;
+    int getBestBuddyOf(int piece, int direction) const;
+
+   void requestCalculateMetric(const std::string& type);
+  };
 }
 
 #endif
