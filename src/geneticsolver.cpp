@@ -17,11 +17,8 @@ GeneticSolver::~GeneticSolver() {
 }
 
 void GeneticSolver::solve() {
-  std::cout << "Generating Chromosomes... " << std::flush;
   generateChromosomes();
-  std::cout << "Done" << std::endl;
 
-  std::cout << "Computing... " << std::endl;
   for (unsigned int i = 0; i < mMaxGeneration; i++) {
     std::cout << "---Generation " << i << std::endl;
 
@@ -32,10 +29,10 @@ void GeneticSolver::solve() {
 
     std::sort(crrPopulation.begin(), crrPopulation.end(), fitness_cmp);
     //removeSameChromosome();
-    std::cout << "------Best chromosome: " << crrPopulation[0]->fitness_value << " " << crrPopulation[mMaxPopulation - 1]->fitness_value <<std::endl;
+    std::cout << "------Best chromosome: " << crrPopulation[0]->fitness_value <<std::endl;
 
     // copy 4 best chromosomes to new population
-    std::cout << "------Creating new generation...";
+    std::cout << "------Creating new generation..." << std::flush;
     newPopulation.clear();
 
     newPopulation.push_back(crrPopulation[0]);

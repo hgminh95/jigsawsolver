@@ -4,8 +4,13 @@
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <iomanip>
+#include <chrono>
 
 using namespace JigsawSolver;
+using namespace std::chrono;
+
+high_resolution_clock::time_point startTime, endTime;
 
 GeneticSolver geneticSolver;
 
@@ -22,13 +27,15 @@ int kSizeColumnsCount = -1;
 
 void processCommandlineArguments(int argc, char *argv[]);
 void printError(std::string errorMessage);
+void printUsage();
 
 int main(int argc, char* argv[]) {
   processCommandlineArguments(argc, argv);
   std::ios_base::sync_with_stdio(false);
 
   if (kInputFile.length() == 0)
-    printError("You must specific input file");
+    printError("You must specific input file.");
+
   if (kSizeRowsCount == -1 || kSizeColumnsCount == -1) {
     std::cout << "You must specific size of image file:" << std::endl;
     std::cout << "---Number of rows: ";
@@ -36,24 +43,18 @@ int main(int argc, char* argv[]) {
     std::cout << "---Number of columns: ";
     std::cin >> kSizeColumnsCount;
   }
-  std::cout << "Loading image from file " << kInputFile << std::endl;
-  Database::getInstance()->importFromImageFile(kInputFile, kSizeRowsCount, kSizeColumnsCount);
-
-  auto geneticSolver = new GeneticSolver();
 
   if (kOutputFile.length() == 0)
-    printError("You must specific output file");
-  geneticSolver->setOutputFile(kOutputFile);
+    printError("You must specific output file.");
 
   if (kMetric.length() == 0) {
-    std::cout << "Not found metric. Use default value..." << std::endl;
+    std::cout << "Not found metric. Use default value (metric = LPQ)." << std::endl;
     kMetric = "LPQ";
   }
-  Database::getInstance()->requestCalculateMetric(kMetric);
 
   if (kMode.length() != 0) {
     if (kMode == "fast") {
-      std::cout << "Mode: fast (population: 50, generation: 20)" << std::endl;
+      std::cout << "Mode: fast (population: 50, generation: 20)." << std::endl;
       kMaxGeneration = 20;
       kMaxPopulation = 50;
     }
@@ -63,24 +64,34 @@ int main(int argc, char* argv[]) {
   }
 
   if (kMaxGeneration == -1) {
-    std::cout << "Not found max generation. Use default value..." << std::endl;
+    std::cout << "Not found max generation. Use default value (max generation = 20)." << std::endl;
     kMaxGeneration = 20;
   }
-  geneticSolver->setMaxGeneration(kMaxGeneration);
 
   if (kMaxPopulation == -1) {
-    std::cout << "Not found max population. Use default value..." << std::endl;
+    std::cout << "Not found max population. Use default value (max population = 50)." << std::endl;
     kMaxPopulation = 50;
   }
-  geneticSolver->setMaxPopulation(kMaxPopulation);
 
   if (kMutationRate == -1) {
-    std::cout << "Not found mutation rate. Use default value..." << std::endl;
+    std::cout << "Not found mutation rate. Use default value (mutation rate = 5\%)." << std::endl;
     kMutationRate = 5;
   }
-  geneticSolver->setMutationRate(kMutationRate);
 
+  startTime = high_resolution_clock::now();
+  Database::getInstance()->importFromImageFile(kInputFile, kSizeRowsCount, kSizeColumnsCount);
+  Database::getInstance()->requestCalculateMetric(kMetric);
+
+  auto geneticSolver = new GeneticSolver();
+  geneticSolver->setMaxGeneration(kMaxGeneration);
+  geneticSolver->setMaxPopulation(kMaxPopulation);
+  geneticSolver->setMutationRate(kMutationRate);
+  geneticSolver->setOutputFile(kOutputFile);
   geneticSolver->solve();
+
+  endTime = high_resolution_clock::now();
+  duration<double> time_span = duration_cast<duration<double>> (endTime - startTime);
+  std::cout << "Execution time: " << time_span.count() << "s." << std::endl;
   return 0;
 }
 
@@ -93,7 +104,7 @@ void processCommandlineArguments(int argc, char *argv[]) {
           kOutputFile = argv[i];
         }
         else {
-          printError("Expected output file after --output");
+          printError("Expected output file after --output.");
         }
       }
 
@@ -103,7 +114,7 @@ void processCommandlineArguments(int argc, char *argv[]) {
           kMetric = argv[i];
         }
         else {
-          printError("Expected metric type after --metric");
+          printError("Expected metric type after --metric.");
         }
       }
 
@@ -113,7 +124,7 @@ void processCommandlineArguments(int argc, char *argv[]) {
           kMode = argv[i];
         }
         else {
-          printError("Expected mode after --mode");
+          printError("Expected mode after --mode.");
         }
       }
 
@@ -123,7 +134,7 @@ void processCommandlineArguments(int argc, char *argv[]) {
           kMaxGeneration = atoi(argv[i]);
         }
         else {
-          printError("Expected number generation after --generation");
+          printError("Expected number generation after --generation.");
         }
       }
 
@@ -133,7 +144,7 @@ void processCommandlineArguments(int argc, char *argv[]) {
           kMaxPopulation = atoi(argv[i]);
         }
         else {
-          printError("Expected population after --population");
+          printError("Expected population after --population.");
         }
       }
 
@@ -144,7 +155,7 @@ void processCommandlineArguments(int argc, char *argv[]) {
           i += 2;
         }
         else {
-          printError("Expected {rows} {columns} after --size");
+          printError("Expected {rows} {columns} after --size.");
         }
       }
     }
@@ -156,5 +167,19 @@ void processCommandlineArguments(int argc, char *argv[]) {
 
 void printError(std::string errorMessage) {
   std::cout << "ERROR: " << errorMessage << std::endl;
+  printUsage();
   exit(0);
+}
+
+void printUsage() {
+  std::cout << "Usage:\n";
+  std::cout << "  jigsawsolver INPUT_FILE [options]\n";
+  std::cout << "\nOptions: \n";
+  std::cout.setf(std::cout.left);
+  std::cout << " " << std::setw(30) << "-o OUTPUT, --output OUTPUT" << std::setw(0) << "specific output file's path\n";
+  std::cout << " " << std::setw(30) << "-m METRIC, --metric METRIC" << std::setw(0) << "specific metric type: lpq, prediction\n";
+  std::cout << " " << std::setw(30) << "--mode MODE" << std::setw(0) << "specific mode: fast, slow\n";
+  std::cout << " " << std::setw(30) << "--generation N" << std::setw(0) << "specific number of generation (N)\n";
+  std::cout << " " << std::setw(30) << "--population S" << std::setw(0) << "specific population's size (S)\n";
+  std::cout << " " << std::setw(30) << "-s R C, --size R C" << std::setw(0) << "specific number of rows (R) and columns (C)\n";
 }

@@ -41,11 +41,8 @@ void Database::importFromImageFile(std::string path, int rowsCount, int columnsC
   mColumnsCount = columnsCount;
   alloc();
 
-  std::cout << "DATABASE INITITALIZING..." << std::endl;
-  std::cout << "---From File: " << path << std::endl;
+  std::cout << "Get information about image: " << path << " ..." << std::flush;
   originalImage.importFrom(path.c_str());
-
-  std::cout << "---Cutting image into pieces..." << std::flush;
   cutImageIntoPieces();
   std::cout << "Done." << std::endl;
 }
